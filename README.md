@@ -6,7 +6,8 @@ Um programa visual para organizar seus casados do Mudae sem digitar comandos! Fu
 ## Como usar?
 
 ### 1️⃣ Pegar os dados do Mudae
-- No Discord, use o comando: `$mmsaty+ri-c+x+ko`
+- No Discord, use o comando: `$mmsty+i-c+x+ko` (Recomendado)
+- *O programa também aceita listas antigas que tenham números (ex: #123 - Nome)*
 - Copie **TODO** o output (pode ser bem longo)
 - Cole no arquivo `dados.txt` neste diretório
 
@@ -41,7 +42,7 @@ Um programa visual para organizar seus casados do Mudae sem digitar comandos! Fu
 
 ### Erro: "dados.txt não encontrado"
 - Crie um arquivo chamado `dados.txt`
-- Copie o output do `$mmsaty+ri-c+x+ko` do Discord
+- Copie o output do `$mmsty+i-c+x+ko` do Discord
 
 ### Imagens não aparecem
 - Verifique sua conexão com a internet

@@ -21,25 +21,39 @@ if not os.path.exists(IMGS_FOLDER):
 # --- 1. FUNÇÃO DE PARSE E DOWNLOAD (The "Mage") ---
 def carregar_e_baixar_dados(progresso_callback=None):
     if not os.path.exists(DADOS_FILE):
-        messagebox.showerror("Erro", "Crie um arquivo dados.txt com o output do comando $mmsaty+ri-c+x+ko")
+        messagebox.showerror("Erro", "Crie um arquivo dados.txt com o output do comando $mmsty+i-c+x+ko")
         return {}
 
     with open(DADOS_FILE, 'r', encoding='utf-8') as f:
         texto = f.read()
 
-    # Regex para capturar ID, Nome e URL
-    # Exemplo: **#5.523** - Misuzu Gundou  💞 => ... <URL>
-    padrao = re.compile(r"\*?\*?#([\d.]+)\*?\*?\s*-\s*([^💞]+)\s*💞.*?(https?://[^\s>]+)", re.DOTALL)
+    # Regex ajustado para capturar qualquer formato (com ou sem números) antes do coração
+    padrao = re.compile(r"([^\n]+?)\s*💞.*?(https?://[^\s>]+)")
     matches = padrao.findall(texto)
 
     personagens = {}
     total = len(matches)
     for i, match in enumerate(matches):
-        char_id = match[0].replace('.', '_')  # Converter 5.523 → 5_523 para ser chave válida
-        char_name = match[1].strip()
-        img_url = match[2].strip()
+        raw_name = match[0].strip()
+        img_url = match[1].strip()
         
-        personagens[char_id] = {'nome': char_name, 'url': img_url, 'id_original': match[0]}
+        # Limpeza inteligente: Remove ID numérico (ex: "#123 - " ou "**#123** -") se existir
+        # Assim o nome fica limpo "Miku Nakano" independente do comando usado
+        char_name = re.sub(r'^[\*\s]*#[\d\.]+[\*\s]*-\s*', '', raw_name)
+        
+        # Gerar ID seguro baseado no nome (já que o input não tem ID numérico)
+        # Remove caracteres especiais para criar nome de arquivo válido
+        safe_name = re.sub(r'[^a-zA-Z0-9]', '_', char_name)
+        char_id = safe_name
+        
+        # Evitar duplicatas (caso tenha dois personagens com mesmo nome exato)
+        count = 1
+        while char_id in personagens:
+            char_id = f"{safe_name}_{count}"
+            count += 1
+        
+        # 'id_original' agora será a posição na lista (1, 2, 3...)
+        personagens[char_id] = {'nome': char_name, 'url': img_url, 'id_original': str(i + 1)}
         
         # Download da imagem se não existir
         img_path = os.path.join(IMGS_FOLDER, f"{char_id}.jpg")
