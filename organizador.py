@@ -191,7 +191,7 @@ class GalleryCardV2(tk.Frame):
 class MudaeOrganizador:
     def __init__(self, root, personagens):
         self.root = root
-        self.root.title("Mudae Note Manager - Organizador Casados")
+        self.root.title("Mudae Organizador Casados")
         self.root.geometry("1500x900")
         self.root.configure(bg="#0d0d0d")
         

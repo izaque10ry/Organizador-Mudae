@@ -25,6 +25,14 @@ Um programa visual para organizar seus casados do Mudae sem digitar comandos! Fu
 - Copie o comando gerado
 - Cole no Discord: `$sm Personagem1 $ Personagem2 $ ...`
 
+### 📤 Como compartilhar com amigos
+Se você quer enviar o programa para alguém (sem erros de pasta .venv):
+1. Execute o arquivo `COMPILAR.bat`
+2. Aguarde o fim do processo
+3. Uma pasta chamada `MudaOrganizador_DISTRIBUICAO` será criada automaticamente
+4. **Envie essa pasta inteira** para seu amigo
+   - Ela já vem pronta com o `.exe` independente e o arquivo de texto necessário.
+
 ## Arquivos
 
 | Arquivo | Função |
