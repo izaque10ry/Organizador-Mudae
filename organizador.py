@@ -163,6 +163,9 @@ class GalleryCardV2(tk.Frame):
             self.config(bg="#FF69B4", relief="sunken", bd=2)
         else:
             self.config(bg="#1a1a1a", relief="ridge", bd=1)
+            
+    def update_position(self, position):
+        self.rank_badge.config(text=f"#{position + 1}")
 
 
 # --- 3. CLASSE PRINCIPAL DA INTERFACE (Estilo Mudae Note Manager) ---
@@ -176,6 +179,7 @@ class MudaeOrganizador:
         self.personagens = personagens
         self.ordem_ids = list(personagens.keys())
         self.selected_card = None
+        self.cards = {}
         
         self.drag_window = None
         self.drag_source = None
@@ -309,16 +313,20 @@ class MudaeOrganizador:
         self.desenhar_galeria()
     
     def desenhar_galeria(self):
-        # Limpar widgets antigos
-        for widget in self.scrollable_frame.winfo_children():
-            widget.destroy()
-        
-        self.cards = {}
+        # Otimização: Reutilizar widgets existentes em vez de destruir e recriar
         row = 0
         col = 0
         
         for i, char_id in enumerate(self.ordem_ids):
-            if char_id in self.tk_images:
+            if char_id not in self.tk_images:
+                continue
+                
+            if char_id in self.cards:
+                # Atualizar card existente
+                card = self.cards[char_id]
+                card.update_position(i)
+            else:
+                # Criar novo card se não existir
                 char_data = self.personagens[char_id]
                 card = GalleryCardV2(
                     self.scrollable_frame,
@@ -328,13 +336,15 @@ class MudaeOrganizador:
                     self.tk_images[char_id],
                     i
                 )
-                card.grid(row=row, column=col, padx=3, pady=3)
                 self.cards[char_id] = card
-                
-                col += 1
-                if col >= colunas_grade:
-                    col = 0
-                    row += 1
+            
+            # Apenas reposiciona na grade (muito mais rápido que recriar)
+            card.grid(row=row, column=col, padx=3, pady=3)
+            
+            col += 1
+            if col >= colunas_grade:
+                col = 0
+                row += 1
 
     # --- DRAG AND DROP ---
     def start_drag(self, card):
