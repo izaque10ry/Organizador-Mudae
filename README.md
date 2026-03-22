@@ -11,37 +11,31 @@ Um programa visual para organizar seus casados do Mudae sem digitar comandos! Fu
 - Cole no arquivo `dados.txt` neste diretório
 
 ### 2️⃣ Rodar o programa
-**Windows**: Clique duas vezes em `RODAR.bat`
-
-**Alternativa**: 
-```bash
-python organizador.py
-```
+**Opção Fácil**: Clique duas vezes em `MudaeOrganizador.exe`
+> *Nota: Na primeira vez, vai aparecer uma barra de carregamento baixando as imagens dos personagens. Aguarde!*
 
 ### 3️⃣ Reorganizar seus personagens
 - A interface mostra todos os seus casados em cards com imagem
 - **Arraste e solte** para reorganizar
-- As imagens são baixadas automaticamente na primeira vez
+- Clique com botão direito em um personagem para mudar a posição manualmente
 
 ### 4️⃣ Gerar comando
-- Clique em "Gerar Comando $mm sort"
+- Clique em "📋 Gerar Comando"
 - Copie o comando gerado
-- Cole no Discord: `$mm sort Personagem1 $ Personagem2 $ ...`
+- Cole no Discord: `$sm Personagem1 $ Personagem2 $ ...`
 
 ## Arquivos
 
 | Arquivo | Função |
 |---------|--------|
-| `organizador.py` | Programa principal |
+| `MudaeOrganizador.exe` | **O Programa (Execute este!)** |
 | `dados.txt` | Seus dados do Mudae (você preenche) |
-| `RODAR.bat` | Atalho para rodar (Windows) |
 | `imagens/` | Pasta com as imagens dos personagens (criada automaticamente) |
-| `teste.py` | Script para testar se tudo funciona |
 
 ## Requisitos
-- Python 3.7+
-- Bibliotecas: tkinter, PIL/Pillow, requests
-- Conexão com internet (para baixar imagens)
+- Se usar o `.exe`, não precisa instalar nada!
+- Conexão com internet (apenas para baixar imagens na primeira vez)
+- Arquivo `dados.txt` na mesma pasta do executável
 
 ## Troubleshooting
 

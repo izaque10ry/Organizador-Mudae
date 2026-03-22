@@ -19,7 +19,7 @@ if not os.path.exists(IMGS_FOLDER):
     os.makedirs(IMGS_FOLDER)
 
 # --- 1. FUNÇÃO DE PARSE E DOWNLOAD (The "Mage") ---
-def carregar_e_baixar_dados():
+def carregar_e_baixar_dados(progresso_callback=None):
     if not os.path.exists(DADOS_FILE):
         messagebox.showerror("Erro", "Crie um arquivo dados.txt com o output do comando $mmsaty+ri-c+x+ko")
         return {}
@@ -33,7 +33,8 @@ def carregar_e_baixar_dados():
     matches = padrao.findall(texto)
 
     personagens = {}
-    for match in matches:
+    total = len(matches)
+    for i, match in enumerate(matches):
         char_id = match[0].replace('.', '_')  # Converter 5.523 → 5_523 para ser chave válida
         char_name = match[1].strip()
         img_url = match[2].strip()
@@ -52,6 +53,10 @@ def carregar_e_baixar_dados():
                             f_img.write(chunk)
             except Exception as e:
                 print(f"Erro ao baixar {char_name}: {e}")
+        
+        # Atualiza a barra de progresso se a função foi passada
+        if progresso_callback:
+            progresso_callback(i + 1, total, char_name)
 
     return personagens
 
@@ -532,18 +537,49 @@ class MudaeOrganizador:
 
 # --- 4. EXECUÇÃO ---
 if __name__ == "__main__":
-    # Passo 1: Processar e Baixar
-    dados_carregados = carregar_e_baixar_dados()
-    
-    if dados_carregados:
-        # Passo 2: Iniciar Interface
-        root = tk.Tk()
-        # Ajustar tamanho inicial
-        root.geometry("800x600")
-        app = MudaeOrganizador(root, dados_carregados)
-        root.mainloop()
-    elif os.path.exists(DADOS_FILE):
+    # Verificação inicial simples
+    if not os.path.exists(DADOS_FILE):
         root = tk.Tk()
         root.withdraw()
-        messagebox.showerror("Erro", "Nenhum personagem encontrado!\n\nO arquivo dados.txt existe, mas o formato não foi reconhecido.\nVerifique se copiou o output correto do Mudae.")
+        messagebox.showerror("Erro", "Arquivo 'dados.txt' não encontrado!\n\nPor favor, crie o arquivo com os dados do Mudae antes de abrir o programa.")
+        root.destroy()
+        exit()
+
+    # === TELA DE CARREGAMENTO (SPLASH SCREEN) ===
+    root = tk.Tk()
+    root.title("Mudae Loader")
+    root.geometry("400x150")
+    root.configure(bg="#1a1a1a")
+    
+    # Centralizar na tela (opcional, mas bom)
+    scr_w = root.winfo_screenwidth()
+    scr_h = root.winfo_screenheight()
+    x = (scr_w - 400) // 2
+    y = (scr_h - 150) // 2
+    root.geometry(f"400x150+{x}+{y}")
+
+    lbl_loading = tk.Label(root, text="Iniciando...", bg="#1a1a1a", fg="white", font=("Arial", 10))
+    lbl_loading.pack(pady=(30, 10))
+
+    progress = ttk.Progressbar(root, orient="horizontal", length=300, mode="determinate")
+    progress.pack(pady=10)
+
+    def atualizar_progresso(atual, total, nome):
+        porcentagem = (atual / total) * 100
+        progress["value"] = porcentagem
+        lbl_loading.config(text=f"Baixando/Processando {atual}/{total}:\n{nome[:35]}...")
+        root.update() # Força a atualização da tela
+
+    # Carregar dados com a barra de progresso
+    dados_carregados = carregar_e_baixar_dados(atualizar_progresso)
+    
+    # Limpar a tela de loading para iniciar o app principal
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    if dados_carregados:
+        app = MudaeOrganizador(root, dados_carregados)
+        root.mainloop()
+    else:
+        messagebox.showerror("Erro", "Nenhum personagem encontrado!\nVerifique o formato do arquivo dados.txt.")
         root.destroy()
