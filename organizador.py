@@ -27,10 +27,18 @@ def carregar_e_baixar_dados():
     with open(DADOS_FILE, 'r', encoding='utf-8') as f:
         texto = f.read()
 
-    # Regex para capturar ID, Nome e URL
+    # Regex para capturar ID, Nome e URL (Padrão 1 - Com ID de Rank)
     # Exemplo: **#5.523** - Misuzu Gundou  💞 => ... <URL>
     padrao = re.compile(r"\*?\*?#([\d.]+)\*?\*?\s*-\s*([^💞]+)\s*💞.*?(https?://[^\s>]+)", re.DOTALL)
     matches = padrao.findall(texto)
+    
+    # Se não encontrar nada, tenta o Padrão 2 (Sem ID de Rank, gerado por outro comando)
+    # Exemplo: Mai Sakurajima  💞 => matheus_reptil · ($wa) 1.035 ka - https://...
+    if not matches:
+        padrao_alt = re.compile(r"^\s*\*?\*?([^💞\n]+?)\*?\*?\s*💞.*?(https?://[^\s>]+)", re.MULTILINE)
+        matches_alt = padrao_alt.findall(texto)
+        # Como o Padrão 2 não possui ID, vamos usar a posição na lista (1, 2, 3...) como ID
+        matches = [(str(i), nome, url) for i, (nome, url) in enumerate(matches_alt, start=1)]
 
     personagens = {}
     for match in matches:

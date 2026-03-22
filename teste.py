@@ -33,8 +33,13 @@ except:
     with open(DADOS_FILE, 'r', encoding='latin-1') as f:
         texto = f.read()
 
-padrao = re.compile(r"\*?\*?#([\d.]+)\*?\*?\s*-\s*([^💞]+)\s*💞.*?<(https?://[^\s>]+)>", re.DOTALL)
+padrao = re.compile(r"\*?\*?#([\d.]+)\*?\*?\s*-\s*([^💞]+)\s*💞.*?(https?://[^\s>]+)", re.DOTALL)
 matches = padrao.findall(texto)
+
+if not matches:
+    padrao_alt = re.compile(r"^\s*\*?\*?([^💞\n]+?)\*?\*?\s*💞.*?(https?://[^\s>]+)", re.MULTILINE)
+    matches_alt = padrao_alt.findall(texto)
+    matches = [(str(i), nome, url) for i, (nome, url) in enumerate(matches_alt, start=1)]
 
 print(f"  ✓ {len(matches)} personagens encontrados!")
 
